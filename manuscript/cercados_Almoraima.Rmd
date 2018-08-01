@@ -360,7 +360,7 @@ map <- ggplot() + #coord_map() +
 
 map
 
-ggplot2::ggsave(file.path(root, "manuscript", "cercados_Almoraima", "Fig1.tif"), map, 
+ggplot2::ggsave(file.path(root, "manuscript", "Fig1.tif"), map, 
                 device = "tiff", width = 6, height = 6, units = "in", dpi = 300, 
                 compression = "lzw")
   
@@ -374,7 +374,7 @@ ggplot2::ggsave(file.path(root, "manuscript", "cercados_Almoraima", "Fig1.tif"),
 height <- scatter_inout(dataset, vble = "height", fontsize = 14, psize = 4, jitter = FALSE,
                             xlab = "Altura matorral fuera (m)", ylab = "Altura matorral dentro (m)")
 
-ggplot2::ggsave(file.path(root, "manuscript", "cercados_Almoraima", "Fig2.tif"), height, 
+ggplot2::ggsave(file.path(root, "manuscript", "Fig2.tif"), height, 
        device = "tiff", width = 6, height = 5, units = "in", dpi = 300, compression = "lzw")
 ```
 
@@ -385,7 +385,7 @@ ggplot2::ggsave(file.path(root, "manuscript", "cercados_Almoraima", "Fig2.tif"),
 plantcover <- scatter_inout(dataset, vble = "cover", fontsize = 14, psize = 4, jitter = TRUE,
                      xlab = "Cobertura fuera (%)", ylab = "Cobertura dentro (%)")
 
-ggplot2::ggsave(file.path(root, "manuscript", "cercados_Almoraima", "Fig3.tif"), plantcover, 
+ggplot2::ggsave(file.path(root, "manuscript", "Fig3.tif"), plantcover, 
        device = "tiff", width = 6, height = 5, units = "in", dpi = 300, compression = "lzw")
 ```
 
@@ -396,7 +396,7 @@ ggplot2::ggsave(file.path(root, "manuscript", "cercados_Almoraima", "Fig3.tif"),
 nsp <- scatter_inout(dataset, vble = "nspp", fontsize = 14, psize = 4, jitter = TRUE,
                      xlab = "N especies fuera", ylab = "N especies dentro")
 
-ggplot2::ggsave(file.path(root, "manuscript", "cercados_Almoraima", "Fig4.tif"), nsp, 
+ggplot2::ggsave(file.path(root, "manuscript", "Fig4.tif"), nsp, 
        device = "tiff", width = 6, height = 5, units = "in", dpi = 300, compression = "lzw")
 ```
 
@@ -418,7 +418,7 @@ ggin <- ggm[[2]] +
 fig <- cowplot::plot_grid(ggout, ggin, nrow = 1, labels = "AUTO") 
 fig
 
-ggplot2::ggsave(file.path(root, "manuscript", "cercados_Almoraima", "Fig5.tif"), fig, 
+ggplot2::ggsave(file.path(root, "manuscript", "Fig5.tif"), fig, 
        device = "tiff", width = 6, height = 7, units = "in", dpi = 300, compression = "lzw")
 ```
 
@@ -443,7 +443,7 @@ ggout
 # fig <- cowplot::plot_grid(ggout, ggin, nrow = 1, labels = "AUTO") 
 # fig
 
-ggplot2::ggsave(file.path(root, "manuscript", "cercados_Almoraima", "Fig6.tif"), ggout, 
+ggplot2::ggsave(file.path(root, "manuscript", "Fig6.tif"), ggout, 
        device = "tiff", width = 6, height = 7, units = "in", dpi = 300, compression = "lzw")
 ```
 
@@ -461,7 +461,7 @@ cover <- multiscatter(df, vble = "cover", shrub.tree = "shrub", remove.zeros = T
              ylab = "Cobertura dentro (%)",
              fontsize = 10, psize = 2, show.bare = FALSE, min.n = 4)
 
-ggplot2::ggsave(file.path(root, "manuscript", "cercados_Almoraima", "Fig7.tif"), cover, 
+ggplot2::ggsave(file.path(root, "manuscript", "Fig7.tif"), cover, 
        device = "tiff", width = 7, height = 6, units = "in", dpi = 300, compression = "lzw")
 ```
 
@@ -482,7 +482,7 @@ ggin <- ggm[[2]] +
 fig <- cowplot::plot_grid(ggout, ggin, nrow = 1, labels = "AUTO") 
 fig
 
-ggplot2::ggsave(file.path(root, "manuscript", "cercados_Almoraima", "Fig8.tif"), fig, 
+ggplot2::ggsave(file.path(root, "manuscript", "Fig8.tif"), fig, 
        device = "tiff", width = 6, height = 7, units = "in", dpi = 300, compression = "lzw")
 ```
 
@@ -500,7 +500,7 @@ damage <- multiscatter(df, vble = "damage", shrub.tree = "shrub", remove.zeros =
              ylab = "Intensidad herbivoría dentro",
              fontsize = 10, psize = 2, min.n = 5)
 
-ggplot2::ggsave(file.path(root, "manuscript", "cercados_Almoraima", "Fig9.tif"), damage, 
+ggplot2::ggsave(file.path(root, "manuscript", "Fig9.tif"), damage, 
        device = "tiff", width = 7, height = 5, units = "in", dpi = 300, compression = "lzw")
 ```
 

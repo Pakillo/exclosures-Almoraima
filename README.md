@@ -57,5 +57,5 @@ rmarkdown::render("analyses/EDA.Rmd")
 
 #### MANUSCRIPT ####
 
-rmarkdown::render("manuscript/cercados_Almoraima/cercados_Almoraima.Rmd")
+rmarkdown::render("manuscript/cercados_Almoraima.Rmd")
 ```

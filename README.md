@@ -2,13 +2,15 @@ Impactos de la herbivoría por ungulados en las comunidades de plantas leñosas 
 ================
 2018-08-01
 
+[![DOI](https://zenodo.org/badge/143153398.svg)](https://zenodo.org/badge/latestdoi/143153398)
+
 Research compendium (code and data) used for the following publication:
 
 Rodríguez-Sánchez F, Luque-Oliva V & Jurado V. (2018) Impactos de la herbivoría por ungulados en las comunidades de plantas leñosas del Parque Natural Los Alcornocales. *Almoraima*, en prensa.
 
-Compendium DOI:
+Compendium DOI: <https://doi.org/10.5281/zenodo.1325107>
 
-CITATION: Rodríguez-Sánchez F, Luque-Oliva V & Jurado V. (2018) Research compendium for "Impactos de la herbivoría por ungulados en las comunidades de plantas leñosas del Parque Natural Los Alcornocales" (Version 1.0.0). Zenodo.
+CITATION: Rodríguez-Sánchez F, Luque-Oliva V & Jurado V. (2018) Research compendium for "Impactos de la herbivoría por ungulados en las comunidades de plantas leñosas del Parque Natural Los Alcornocales" (Version 1.0.0). Zenodo. <https://doi.org/10.5281/zenodo.1325107>
 
 Installation
 ------------

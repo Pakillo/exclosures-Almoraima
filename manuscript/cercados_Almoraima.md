@@ -101,7 +101,7 @@ bare <- filter(abudata, species == "bare")
 
 Para el análisis de la presencia/ausencia de especies en cada transecto, utilizamos un modelo mixto lineal generalizado (GLMM) con distribución binomial y enlace logit:
 
-*l**o**g**i**t*(*P**r**e**s**e**n**c**i**a*<sub>*i**j*</sub>)=*α* + *β* \* *D**e**n**t**r**o*<sub>*i**j*</sub> + *γ*<sub>*i*</sub> + *δ*<sub>*j*</sub>
+*logit(Presencia<sub>ij</sub>)=α + β \ Dentro<sub>ij</sub> + γ<sub>i</sub> + δ<sub>j</sub>*
 
 donde la presencia de la especie *i* en el transecto *j* depende de un intercepto general (*α*) que representa la probabilidad media de presencia de cualquier especie fuera de los cercados (prevalencia), el efecto (*β*) que encapsula la diferencia en probabilidad de presencia dentro de los cercados, y dos efectos aleatorios para absorber la variación en probabilidades de presencia entre especies (*γ*) y sitios (*δ*).
 
@@ -126,7 +126,7 @@ presabs.model <- glmer(presence ~ 1 + zinside + (1 + zinside | species) + (1 | s
 
 Para analizar la abundancia de especies (cobertura lineal), utilizamos un modelo lineal mixto con la misma estructura de predictores pero distribución gaussiana, tras normalizar los datos de cobertura con una transformación logit (Warton y Hui, 2011):
 
-*l**o**g**i**t*(*C**o**b**e**r**t**u**r**a*<sub>*i**j*</sub>)=*α* + *β* \* *D**e**n**t**r**o*<sub>*i**j*</sub> + *γ*<sub>*i*</sub> + *δ*<sub>*j*</sub>
+*logit(Cobertura<sub>ij</sub>)=α + β \ Dentro<sub>ij</sub> + γ<sub>i</sub> + δ<sub>j</sub>*
 
 ``` r
 bare.model <- lmer(logitcover ~ 1 + zinside + (1 |site), data = bare)
@@ -145,7 +145,7 @@ abuspp.model <- lmer(logitcover ~ 1 + zinside + (1 + zinside |species) + (1 |sit
 
 Para analizar si las plantas dentro del cerramiento tenían efectivamente menos daños por ramoneo de los herbívoros, modelamos el daño observado (siguiendo la categoría semicuantitativa de Montoya (1998)) utilizando un modelo mixto con distribución de Poisson:
 
-*l**o**g*(*D**a**ñ**o*<sub>*i**j*</sub>)=*α* + *β* \* *D**e**n**t**r**o*<sub>*i**j*</sub> + *γ*<sub>*i*</sub> + *δ*<sub>*j*</sub>
+*log(Daño<sub>ij</sub>)=α + β \ Dentro<sub>ij</sub> + γ<sub>i</sub> + δ<sub>j</sub>*
 
 ``` r
 damagemodel <- glmer(damage ~ 1 + zinside + (1 + zinside | species) + (1|site), 

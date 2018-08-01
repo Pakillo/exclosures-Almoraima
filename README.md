@@ -8,6 +8,8 @@ Research compendium (code and data) used for the following publication:
 
 Rodríguez-Sánchez F, Luque-Oliva V & Jurado V. (2018) Impactos de la herbivoría por ungulados en las comunidades de plantas leñosas del Parque Natural Los Alcornocales. *Almoraima*, en prensa.
 
+The manuscript, written in Rmarkdown, can be read [here](https://github.com/Pakillo/exclosures-Almoraima/blob/1.0.0/manuscript/cercados_Almoraima.md). The submitted Word file is [here](https://github.com/Pakillo/exclosures-Almoraima/blob/1.0.0/manuscript/cercados_Almoraima.docx).
+
 Compendium DOI: <https://doi.org/10.5281/zenodo.1325107>
 
 CITATION: Rodríguez-Sánchez F, Luque-Oliva V & Jurado V. (2018) Research compendium for "Impactos de la herbivoría por ungulados en las comunidades de plantas leñosas del Parque Natural Los Alcornocales" (Version 1.0.0). Zenodo. <https://doi.org/10.5281/zenodo.1325107>

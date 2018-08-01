@@ -1,0 +1,9 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^README\.Rmd$
+^data-raw$
+
+^analyses$ 
+^manuscript$ 
+^\.travis\.yml$
+^LICENSE\.md$

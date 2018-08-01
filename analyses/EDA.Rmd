@@ -1,0 +1,405 @@
+---
+title: "Exploratory Data Analysis"
+author: "Francisco Rodriguez-Sanchez"
+date: "`r Sys.Date()`"
+output: pdf_document
+geometry: margin=0.8in
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+#knitr::opts_chunk$set(echo = TRUE)
+opts_knit$set(root.dir=normalizePath('../'))
+```
+
+
+```{r packages, cache=FALSE, message=FALSE}
+library(readr)
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(arm)
+```
+
+
+# Read dataset
+
+```{r}
+dataset <- read_csv("data/fulldata.csv")
+dataset <- mutate(dataset, inside = ifelse(inside == 1, "in", "out"))
+str(dataset)
+summary(dataset)
+head(dataset)
+tail(dataset)
+```
+
+Derive some useful datasets:
+```{r}
+shrubs <- filter(dataset, shrub_tree == "shrub")
+trees <- filter(dataset, shrub_tree == "tree")
+
+## Only present species, and excluding bare soil
+shrubs_present <- filter(shrubs, presence == 1, acronym != "Bare")
+trees_present <- filter(trees, presence == 1, acronym != "Bare")
+```
+
+
+
+
+
+
+# Sites
+
+```{r}
+sites <- dataset %>%
+  distinct(site, inside, .keep_all = TRUE) %>%
+  dplyr::select(site:inside)
+  
+```
+
+
+## Number of sites
+
+There are `r nrow(distinct(sites, site))` sites, with 2 transects in each site (in and out of the exclosure).
+
+```{r}
+kable(sites)
+```
+
+
+## Map of sites
+
+```{r fig.keep='last'}
+rSDM::occmap(as.matrix(sites[, c("long", "lat")]), type = "satellite", exp = 2)
+```
+
+
+## Altitude of sites
+
+```{r}
+siteplots <- ggplot(sites) 
+siteplots + geom_histogram(aes(altitude))
+```
+
+
+
+# Shrubs
+
+
+## Shrubs: number of species present, their mean cover, and damage at each site
+
+```{r}
+shrubcover <- shrubs %>%
+  group_by(site, inside) %>%
+  filter(acronym == "Bare") %>%
+  dplyr::select(cover) %>%
+  transmute(shrubcover = 100*(50 - cover)/50)   # shrub cover in %
+
+shrubs.summary <- shrubs_present %>%
+  group_by(site, inside) %>%
+  summarise(shrub_height = unique(shrub_height),
+            nspp = sum(presence),
+            mean_cover = round(mean(cover), 1), 
+            sd_cover = round(sd(cover), 1),
+            median_cover = round(median(cover), 1),
+            mean_damage = round(mean(damage, na.rm = TRUE), 1)) 
+
+shrubs.summary <- left_join(shrubcover, shrubs.summary, by = c("site", "inside"))
+
+kable(shrubs.summary)
+```
+
+
+## Shrubs: quick comparison in-out
+
+```{r}
+kable(shrubs.summary %>%
+        group_by(inside) %>%
+        summarise(mean_shrub.cover = mean(shrubcover),
+                  mean_shrub.height = mean(shrub_height),
+                  mean_nspp = mean(nspp),
+                  mean_cover = mean(mean_cover),
+                  mean_damage = mean(mean_damage)))
+```
+
+N.B. Given the hierarchical structure of the data (obs within sites), the most correct way
+of comparing average cover & damage in and out of exclosures is using mixed models.
+
+
+
+## Is shrub cover higher within exclosures?
+
+```{r}
+shrubplots <- ggplot(shrubs.summary, aes(x = factor(inside)))
+shrubplots + geom_dotplot(aes(y = shrubcover), binaxis = "y", stackdir = "center")
+```
+
+Only Barrancones has low cover within the exclosure.
+
+For this variable (cover), bounded between 0 and 100 %, we should use beta regression, or logit-transform the data [Wharton et al. 2011](http://doi.org/10.1890/10-0340.1). Here we opt in for the latter:
+
+```{r}
+shrubs.summary$logitcover <- arm::logit(shrubs.summary$shrubcover/100)
+cover.model <- lm(logitcover ~ inside, data = shrubs.summary)
+summary(cover.model)
+hist(resid(cover.model))
+cover.sim <- sim(cover.model, n.sims = 1000)
+coefs <- coef(cover.sim)
+coefs[,2] <- coefs[, 1] + coefs[, 2]
+coefs <- as.data.frame(invlogit(coefs))
+names(coefs) <- c("inside", "outside")
+apply(coefs, 2, quantile, c(0, 0.025, 0.25, 0.5, 0.75, 0.975, 1))
+apply(coefs, 2, mean)
+apply(coefs, 2, sd)
+```
+
+ 
+```{r}
+coefs <- gather(coefs, "in_out", "cover", 1:2)
+
+ggplot(coefs, aes(in_out, cover)) +
+  geom_violin()
+```
+
+
+
+
+
+
+
+## Is shrub height higher within exclosures?
+
+```{r}
+shrubplots + geom_dotplot(aes(y = shrub_height), binaxis = "y", stackdir = "center")
+```
+
+
+```{r}
+height.model <- lm(log(shrub_height) ~ inside, data = shrubs.summary)
+summary(height.model)
+hist(resid(height.model))
+height.sim <- sim(height.model, n.sims = 1000)
+coefs <- coef(cover.sim)
+coefs[,2] <- coefs[, 1] + coefs[, 2]
+coefs <- as.data.frame(exp(coefs))
+names(coefs) <- c("inside", "outside")
+apply(coefs, 2, quantile, c(0, 0.025, 0.25, 0.5, 0.75, 0.975, 1))
+apply(coefs, 2, mean)
+apply(coefs, 2, sd)
+```
+
+ 
+```{r}
+coefs <- gather(coefs, "in_out", "height", 1:2)
+
+ggplot(coefs, aes(in_out, height)) +
+  geom_violin()
+```
+
+
+
+
+
+## Are there more species within exclosures?
+
+```{r}
+shrubplots + geom_dotplot(aes(y = nspp), binaxis = "y", stackdir = "center")
+```
+
+
+```{r}
+nspp.model <- glm(nspp ~ inside, data = shrubs.summary, family = poisson)
+summary(nspp.model)
+hist(resid(nspp.model))
+nspp.sim <- sim(nspp.model, n.sims = 1000)
+coefs <- coef(nspp.sim)
+coefs[,2] <- coefs[, 1] + coefs[, 2]
+coefs <- as.data.frame(exp(coefs))
+names(coefs) <- c("inside", "outside")
+apply(coefs, 2, quantile, c(0, 0.025, 0.25, 0.5, 0.75, 0.975, 1))
+apply(coefs, 2, mean)
+apply(coefs, 2, sd)
+```
+
+
+```{r}
+coefs <- gather(coefs, "in_out", "nspp", 1:2)
+
+ggplot(coefs, aes(in_out, nspp)) +
+  geom_violin()
+```
+
+
+
+
+
+
+
+
+## Shrubs: spp appearing in and out of exclosures
+
+### species appearing within
+```{r}
+shrubs.in <- shrubs_present %>%
+  filter(inside == "in") %>%
+  distinct(species) %>%
+  mutate(id = seq(1:nrow(.))) %>%
+  dplyr::select(id, species)
+kable(shrubs.in)
+```
+
+### species appearing outside
+```{r}
+shrubs.out <- shrubs_present %>%
+  filter(inside == "out") %>%
+  distinct(species) %>%
+  mutate(id = seq(1:nrow(.))) %>%
+  dplyr::select(id, species)
+kable(shrubs.out)
+```
+
+
+
+### Shrubs: species occurring only in or out of exclosures
+
+### only in
+```{r}
+in.only <- anti_join(shrubs.in, shrubs.out, by = "species") %>% 
+  dplyr::select(-id) %>%
+  arrange(species)
+kable(in.only)
+```
+
+### only out
+```{r}
+out.only <- anti_join(shrubs.out, shrubs.in, by = "species") %>% 
+  dplyr::select(-id) %>%
+  arrange(species)
+kable(out.only)
+```
+
+
+## Shrubs: summary of species frequency, cover, and damage
+
+```{r}
+kable(shrubs_present %>%
+  group_by(species, inside) %>%
+  summarise(freq = sum(presence),
+            mean_cover = round(mean(cover), 1),
+            sd_cover = round(sd(cover), 1),
+            median_cover = round(median(cover), 1),
+            mean_damage = round(mean(damage, na.rm = TRUE), 1)))
+```
+
+
+
+
+# Trees
+
+## trees: number of species present, their mean cover, and damage at each site
+
+```{r}
+treecover <- trees %>%
+  group_by(site, inside) %>%
+  filter(acronym == "Bare") %>%
+  dplyr::select(cover) %>%
+  transmute(treecover = 100*(50 - cover)/50)   # tree cover in %
+
+trees.summary <- trees_present %>%
+  group_by(site, inside) %>%
+  summarise(nspp = sum(presence), 
+            mean_cover = round(mean(cover), 1), 
+            sd_cover = round(sd(cover), 1),
+            median_cover = round(median(cover), 1)) %>%
+  left_join(treecover, by = c("site", "inside"))
+
+kable(trees.summary)
+```
+
+
+## trees: quick comparison in-out
+
+```{r}
+kable(trees.summary %>%
+  group_by(inside) %>%
+  summarise(mean_nspp = mean(nspp),
+            mean_treecover = mean(treecover),
+            mean_cover = mean(mean_cover)))
+```
+
+N.B. Given the hierarchical structure of the data (obs within sites), the most correct way
+of comparing average cover, damage, etc in and out of exclosures is using mixed models.
+
+
+## trees: spp in and out
+
+```{r}
+trees.in <- trees_present %>%
+  filter(inside == "in") %>%
+  distinct(species) %>%
+  mutate(id = seq(1:nrow(.))) %>%
+  dplyr::select(id, species)
+kable(trees.in)
+
+
+trees.out <- trees_present %>%
+  filter(inside == "out") %>%
+  distinct(species) %>%
+  mutate(id = seq(1:nrow(.))) %>%
+  dplyr::select(id, species)
+kable(trees.out)
+```
+
+
+
+### trees: species occurring only in or out of exclosures
+
+```{r}
+in.only <- anti_join(trees.in, trees.out, by = "species") %>% 
+  dplyr::select(-id) %>%
+  arrange(species)
+kable(in.only)
+
+
+out.only <- anti_join(trees.out, trees.in, by = "species") %>% 
+  dplyr::select(-id) %>%
+  arrange(species)
+kable(out.only)
+```
+
+
+
+
+
+
+
+# Appendix: species cover and damage per site
+
+## Shrubs
+```{r}
+shrubdam <- shrubs_present %>%
+  dplyr::select(site, inside, species, damage) %>%
+  mutate(inside = ifelse(inside == "in", "damage_in", "damage_out")) %>%
+  spread(inside, damage) 
+
+shrubcov <- shrubs_present %>%
+  dplyr::select(site, inside, species, cover) %>%
+  mutate(inside = ifelse(inside == "in", "cover_in", "cover_out")) %>%
+  spread(inside, cover) %>%
+  arrange(site, desc(cover_in)) %>%
+  left_join(shrubdam, by = c("site", "species"))
+
+kable(shrubcov)
+```
+
+
+## Trees
+```{r}
+kable(trees_present %>%
+  dplyr::select(site, inside, species, cover) %>%
+  mutate(inside = ifelse(inside == "in", "cover_in", "cover_out")) %>%
+  spread(inside, cover) %>%
+  arrange(site, desc(cover_in))) 
+```
+
+

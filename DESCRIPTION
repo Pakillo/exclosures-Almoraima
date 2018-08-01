@@ -1,0 +1,34 @@
+Package: exclosures
+Title: Analysis of the impacts of deer overpopulation in forest understoreys of Los Alcornocales Natural Park (southern Spain)
+Version: 1.0.0
+Authors@R: as.person(c(
+    "Francisco Rodriguez-Sanchez <f.rodriguez.sanc@gmail.com> [aut, cre]",
+    "Virginia Luque <v.luqueoliva@gmail.com> [aut]"
+    ))
+Description: Analysis of the impacts of deer herbivory on woody plant communities in
+    Los Alcornocales Natural Park (southernmost Spain).
+Depends:
+    R (>= 3.3.0)
+Imports:
+    devtools,
+    dplyr,
+    ggplot2,
+    readr,
+    tidyr,
+    stats,
+    vegan,
+    vegetools
+Suggests:
+    arm,
+    cowplot,
+    knitcitations,
+    knitr,
+    lme4,
+    rprojroot,
+    sf,
+    sjPlot
+Remotes: Pakillo/vegetools
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: no
+RoxygenNote: 6.1.0

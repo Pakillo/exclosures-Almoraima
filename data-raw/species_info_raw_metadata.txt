@@ -1,0 +1,24 @@
+species:
+
+palatability: This concept is related to how appetising are the different species for browsing animals. The scale we used is the stablished by @Montoya1996. The scale goes from 1 to 6, where the specie valued with 1 is the least palatable while the specie valued with 6 is the most palatable one. Next table shows the species and its palatability.
+
+(TABLE PALATABILITY)
+
+resprouter:
+
+Herrera_type: This is refered to the categorization made by @Herrera84 related to morphological and functional attributes of the southern mediterranean shrub species. The main characteristics of both groups are collected in the next table.
+
+| Type I  | Type II |
+|-------- | --------|
+| Cosmopolitan family species  |  Tropical family species  |
+| Early succession stages |  Late succession stages |
+| Great phylogenetic variety | Late diversification  |
+| Pollination by insects | Pollination by wind  |
+| Abiotic dispersal | Zoochorous dispersal |
+| Small seed | Big or medium seed |
+| Big flowers | Small flowers |
+| Summer deciduous leaves | Perennial leaves|
+| Presence of essential oils or resins | Lack of them |
+
+
+Coca:
